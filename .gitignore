@@ -1,0 +1,52 @@
+# Build directories
+build/
+build-*/
+out/
+cmake-build-*/
+bin/
+lib/
+
+# CMake artifacts
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+install_manifest.cmake
+CTestTestfile.cmake
+Testing/
+compile_commands.json
+
+# Compiled objects and binaries
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.exp
+*.map
+
+# Logs and runtime output
+*.log
+logs/
+
+# Editors / IDEs
+.vscode/
+.vs/
+.idea/
+*.iml
+*.user
+*.suo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Tooling caches
+.cache/
+.clangd/
