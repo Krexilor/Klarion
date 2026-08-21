@@ -37,3 +37,11 @@ add_subdirectory(external/tomlplusplus)
 # Library
 # ------------------------------------------------------------------
 add_subdirectory(src)
+
+if(KLARION_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+
+if(KLARION_BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
