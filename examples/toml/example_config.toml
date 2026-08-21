@@ -1,0 +1,8 @@
+[default]
+level = "debug"
+sinks = ["console"]
+
+[sinks.console]
+type = "console"
+pattern = "[%time] [%level] [%logger] %msg"
+color = "auto"
