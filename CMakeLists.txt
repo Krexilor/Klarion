@@ -28,6 +28,13 @@ option(KLARION_BUILD_EXAMPLES "Build Klarion examples" OFF)
 option(KLARION_BUILD_TESTS "Build Klarion tests" OFF)
 
 # ------------------------------------------------------------------
+# Testing
+# ------------------------------------------------------------------
+if(KLARION_BUILD_TESTS)
+    enable_testing()
+endif()
+
+# ------------------------------------------------------------------
 # Dependencies (submodules)
 # ------------------------------------------------------------------
 add_subdirectory(external/fmt)

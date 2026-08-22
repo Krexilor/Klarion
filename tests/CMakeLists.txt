@@ -19,7 +19,6 @@ target_link_libraries(test_config PRIVATE Klarion::klarion)
 add_executable(test_env_overrides config/test_env_overrides.cpp)
 target_link_libraries(test_env_overrides PRIVATE Klarion::klarion)
 
-enable_testing()
 add_test(NAME test_level COMMAND test_level)
 add_test(NAME test_logger COMMAND test_logger)
 add_test(NAME test_runtime_level COMMAND test_runtime_level)
