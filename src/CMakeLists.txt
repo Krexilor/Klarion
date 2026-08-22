@@ -8,6 +8,7 @@ add_library(klarion STATIC
     sinks/file_sink.cpp
     sinks/console_sink.cpp
     config/toml_config.cpp
+    config/env_overrides.cpp
     detail/terminal/console_color.cpp
     detail/formatting/pattern_formatter.cpp
 )
