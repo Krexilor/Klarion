@@ -1,3 +1,6 @@
+// LIBRARIES ---------------------------------------------------------------------------------------------------------------------------------------|
+#include <cstdlib>
+
 // PROJECT HEADER FILES ----------------------------------------------------------------------------------------------------------------------------|
 #include "klarion/klarion.hpp"
 #include "klarion/sinks/file_sink.hpp"
@@ -10,6 +13,11 @@ namespace klarion {
     bool Klarion::initialized_{false};
 
     void Klarion::init() {
+        if (const char* config_path_env = std::getenv("KLARION_CONFIG")) {
+            init(std::string(config_path_env));
+            return;
+        }
+
         Config config;
         config.add_console_sink();
         init(config);
@@ -22,7 +30,20 @@ namespace klarion {
 
     void Klarion::init(const Config& config) {
         std::lock_guard<std::mutex> lock(mutex_);
+        reinit_locked(config);
+    }
 
+    void Klarion::reload(const Config& config) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        reinit_locked(config);
+    }
+
+    void Klarion::reload(const std::string& config_path) {
+        Config config = Config::from_toml_file(config_path);
+        reload(config);
+    }
+
+    void Klarion::reinit_locked(const Config& config) {
         if (initialized_) {
             shutdown_impl();
         }
@@ -76,6 +97,13 @@ namespace klarion {
         }
     }
 
+    void Klarion::set_level(const std::string& logger_name, Level level) {
+        auto logger = get(logger_name);
+        if (logger) {
+            logger->set_level(level);
+        }
+    }
+
     bool Klarion::is_initialized() {
         return initialized_;
     }
@@ -93,7 +121,7 @@ namespace klarion {
                 sink_map[key] = create_sink(sink_config);
             }
             catch (const std::exception&) {
-                // skip invalid sink, continue with others
+                // Skip invalid sink, continue with the rest.
             }
         }
 
@@ -103,12 +131,14 @@ namespace klarion {
         if (!config.default_sinks().empty()) {
             for (const auto& name : config.default_sinks()) {
                 auto it = sink_map.find(name);
-                if (it != sink_map.end()) def_logger->add_sink(it->second);
+                if (it != sink_map.end()) {
+                    def_logger->add_sink(it->second);
+                }
             }
         } else {
             for (const auto& [name, sink] : sink_map) {
                 def_logger->add_sink(sink);
-            }   
+            }
         }
 
         loggers_["default"] = def_logger;
@@ -116,12 +146,18 @@ namespace klarion {
         for (const auto& logger_config : config.loggers()) {
             auto logger = std::make_shared<Logger>(logger_config.name);
             logger->set_level(logger_config.level);
-            if (!logger_config.pattern.empty()) logger->set_pattern(logger_config.pattern);
+
+            if (!logger_config.pattern.empty()) {
+                logger->set_pattern(logger_config.pattern);
+            }
 
             for (const auto& sink_name : logger_config.sinks) {
                 auto it = sink_map.find(sink_name);
-                if (it != sink_map.end()) logger->add_sink(it->second);
+                if (it != sink_map.end()) {
+                    logger->add_sink(it->second);
+                }
             }
+
             loggers_[logger_config.name] = logger;
         }
     }
