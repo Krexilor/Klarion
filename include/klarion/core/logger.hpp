@@ -9,6 +9,7 @@
 
 // PROJECT HEADING FILES ---------------------------------------------------------------------------------------------------------------------------|
 #include "klarion/core/level.hpp"
+#include "klarion/core/field.hpp"
 #include "klarion/sinks/sink.hpp"
 #include "klarion/core/record.hpp"
 
@@ -36,7 +37,7 @@ namespace klarion {
 
             std::size_t sink_count() const;
             
-            void log(Level level, std::string message, SourceLocation location);
+            void log(Level level, std::string message, SourceLocation location, std::vector<Field> fields = {});
             void set_pattern(const std::string& pattern);
 
         private:

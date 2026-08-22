@@ -52,18 +52,14 @@ namespace klarion {
         return sinks_.size();
     }
 
-    void Logger::log(Level level, std::string message, SourceLocation location) {
+    void Logger::log(Level level, std::string message, SourceLocation location, std::vector<Field> fields) {
         std::lock_guard<std::mutex> lock(mutex_);
 
         if (!is_enabled(level, level_)) {
             return;
         }
 
-        LogRecord record;
-        record.level = level;
-        record.message = std::move(message);
-        record.logger_name = name_;
-        record.location = location;
+        LogRecord record(level, std::move(message), name_, location, std::move(fields));
 
         for (auto& sink : sinks_) {
             if (sink->should_log(level)) {
