@@ -97,6 +97,20 @@ namespace klarion::detail {
                         return std::string(r.location.function);
                     });
                 }
+                else if (placeholder == "fields" || placeholder == "kv") {
+                    formatters_.push_back([](const LogRecord& r) {
+                        if (r.fields.empty()) {
+                            return std::string();
+                        }
+
+                        std::ostringstream oss;
+                        for (size_t i = 0; i < r.fields.size(); ++i) {
+                            if (i > 0) oss << ' ';
+                            oss << r.fields[i].key << '=' << r.fields[i].value;
+                        }
+                        return oss.str();
+                    });
+                }
                 else {
                     formatters_.push_back([text = "%" + placeholder](const LogRecord&) {
                         return text;
