@@ -2,7 +2,7 @@
 #include <cstdlib>
 
 // PROJECT HEADER FILES ----------------------------------------------------------------------------------------------------------------------------|
-#include "klarion/klarion.hpp"
+#include "klarion/core/init.hpp"
 #include "klarion/sinks/file_sink.hpp"
 #include "klarion/sinks/console_sink.hpp"
 

@@ -9,12 +9,11 @@
 #include <fmt/format.h>
 
 // PROJECT HEADER FILES ----------------------------------------------------------------------------------------------------------------------------|
-#include "klarion/klarion.hpp"
+#include "klarion/core/init.hpp"
 #include "klarion/core/field.hpp"
 
 // MACROS DEFINATION -------------------------------------------------------------------------------------------------------------------------------|
 namespace klarion {
-    // Log a message with fmt-style formatting
     template<typename... Args>
     inline void log(Level level, SourceLocation location, fmt::format_string<Args...> fmt, Args&&... args) {
         auto logger = default_logger();
@@ -24,7 +23,6 @@ namespace klarion {
         }
     }
 
-    // Log a message to a specific logger
     template<typename... Args>
     inline void log_to(const std::string& logger_name, Level level, SourceLocation location, fmt::format_string<Args...> fmt, Args&&... args) {
         auto logger = get(logger_name);
@@ -34,7 +32,6 @@ namespace klarion {
         }
     }
 
-    // Log a plain message with structured key-value fields
     template<typename... Fields>
     inline void log_kv(Level level, SourceLocation location, std::string message, Fields&&... fields) {
         auto logger = default_logger();
@@ -43,7 +40,6 @@ namespace klarion {
         }
     }
 
-    // Log a plain message with structured key-value fields to a specific logger
     template<typename... Fields>
     inline void log_to_kv(const std::string& logger_name, Level level, SourceLocation location, std::string message, Fields&&... fields) {
         auto logger = get(logger_name);
