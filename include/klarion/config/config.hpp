@@ -51,7 +51,10 @@ namespace klarion {
             const std::vector<SinkConfig>& sinks() const { return sink_configs_; }
             const std::vector<LoggerConfig>& loggers() const { return logger_configs_; }
             const std::vector<std::string>& default_sinks() const { return default_sinks_; }
-            
+
+            // Mutable access for post-parse adjustments
+            std::vector<LoggerConfig>& mutable_loggers() { return logger_configs_; }
+
             static Config from_toml_file(const std::string& path);
             static Config from_toml_string(const std::string& toml);
 

@@ -1,6 +1,6 @@
 // LIBRARIES ---------------------------------------------------------------------------------------------------------------------------------------|
-#include <fstream> 
 #include <sstream>
+#include <fstream>
 #include <stdexcept>
 
 // EXTERNAL LIBRARIES ------------------------------------------------------------------------------------------------------------------------------|
@@ -8,6 +8,7 @@
 
 // PROJECT HEADER FILES ----------------------------------------------------------------------------------------------------------------------------|
 #include "klarion/config/config.hpp"
+#include "klarion/config/env_overrides.hpp"
 
 // TOML CONFIG IMPLEMENTATION ----------------------------------------------------------------------------------------------------------------------|
 namespace klarion {
@@ -147,7 +148,7 @@ namespace klarion {
             }
 
             // Parse named logger configurations
-            if (auto loggers_table = tbl["logger"].as_table()) {
+            if (auto loggers_table = tbl["loggers"].as_table()) {
                 for (auto&& [logger_name, logger_configs] : *loggers_table) {
                     if (!logger_configs.is_table()) continue;
 
@@ -178,6 +179,8 @@ namespace klarion {
         catch (const toml::parse_error& e) {
             throw std::runtime_error(std::string("TOML parse error: ") + e.what());
         }
+
+        detail::apply_environment_overrides(config);
 
         return config;
     }

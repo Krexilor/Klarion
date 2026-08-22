@@ -1,10 +1,12 @@
 // PROJECT HEADER FILES ----------------------------------------------------------------------------------------------------------------------------|
 #include "klarion/config/config.hpp"
+#include "klarion/config/env_overrides.hpp"
 
 // CONFIG IMPLEMENTATION ---------------------------------------------------------------------------------------------------------------------------|
 namespace klarion {
     Config::Config() {
         default_pattern_ = "[%time] [%level] [%logger] %msg";
+        detail::apply_environment_overrides(*this);
     }
 
     Config& Config::set_level(Level level) {
