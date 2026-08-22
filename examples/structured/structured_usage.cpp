@@ -3,8 +3,6 @@
 
 // PROJECT HEADER FILES ----------------------------------------------------------------------------------------------------------------------------|
 #include "klarion/klarion.hpp"
-#include "klarion/core/macros.hpp"
-#include "klarion/sinks/console_sink.hpp"
 
 // STRUCTURED LOGGING EXAMPLE ----------------------------------------------------------------------------------------------------------------------|
 int main() {
