@@ -2,15 +2,22 @@
 # Klarion library target
 # ------------------------------------------------------------------
 add_library(klarion STATIC
-    core/logger.cpp
     core/klarion.cpp
+    core/logger.cpp
     config/config.cpp
-    sinks/file_sink.cpp
-    sinks/console_sink.cpp
     config/toml_config.cpp
     config/env_overrides.cpp
+
+    detail/filesystem/path_utils.cpp
     detail/terminal/console_color.cpp
     detail/formatting/pattern_formatter.cpp
+
+    sinks/file_sink.cpp
+    sinks/test_sink.cpp
+    sinks/json_sink.cpp
+    sinks/console_sink.cpp
+    sinks/backtrace_sink.cpp
+    sinks/rotating_file_sink.cpp
 )
 add_library(Klarion::klarion ALIAS klarion)
 
