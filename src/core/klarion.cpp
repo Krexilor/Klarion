@@ -3,8 +3,10 @@
 
 // PROJECT HEADER FILES ----------------------------------------------------------------------------------------------------------------------------|
 #include "klarion/core/init.hpp"
+#include "klarion/sinks/json_sink.hpp"
 #include "klarion/sinks/file_sink.hpp"
 #include "klarion/sinks/console_sink.hpp"
+#include "klarion/sinks/rotating_file_sink.hpp"
 
 // KLARION IMPLEMENTATION --------------------------------------------------------------------------------------------------------------------------|
 namespace klarion {
@@ -23,8 +25,8 @@ namespace klarion {
         init(config);
     }
 
-    void Klarion::init(const std::string& config_path) {
-        Config config = Config::from_toml_file(config_path);
+    void Klarion::init(const std::string& config_path, bool strict) {
+        Config config = Config::from_toml_file(config_path, strict);
         init(config);
     }
 
@@ -38,8 +40,8 @@ namespace klarion {
         reinit_locked(config);
     }
 
-    void Klarion::reload(const std::string& config_path) {
-        Config config = Config::from_toml_file(config_path);
+    void Klarion::reload(const std::string& config_path, bool strict) {
+        Config config = Config::from_toml_file(config_path, strict);
         reload(config);
     }
 
@@ -178,6 +180,17 @@ namespace klarion {
             auto sink = std::make_shared<FileSink>(config.path, config.append);
             sink->set_level(config.level);
             sink->set_pattern(config.pattern);
+            return sink;
+        }
+        else if (config.type == "rotating_file") {
+            auto sink = std::make_shared<RotatingFileSink>(config.path, config.max_size, config.max_files);
+            sink->set_level(config.level);
+            sink->set_pattern(config.pattern);
+            return sink;
+        }
+        else if (config.type == "json") {
+            auto sink = std::make_shared<JsonSink>(config.path, config.append);
+            sink->set_level(config.level);
             return sink;
         }
 

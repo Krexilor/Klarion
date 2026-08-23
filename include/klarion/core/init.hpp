@@ -17,12 +17,12 @@ namespace klarion {
     class Klarion {
         public:
             static void init();
-            static void init(const std::string& config_path);
+            static void init(const std::string& config_path, bool strict = false);
             static void init(const Config& config);
             static void shutdown();
 
             static void reload(const Config& config);
-            static void reload(const std::string& config_path);
+            static void reload(const std::string& config_path, bool strict = false);
 
             static std::shared_ptr<Logger> default_logger();
             static std::shared_ptr<Logger> get(const std::string& name);
@@ -44,12 +44,12 @@ namespace klarion {
     };
 
     inline void init() { Klarion::init(); }
-    inline void init(const std::string& config_path) { Klarion::init(config_path); }
+    inline void init(const std::string& config_path, bool strict = false) { Klarion::init(config_path, strict); }
     inline void init(const Config& config) { Klarion::init(config); }
     inline void shutdown() { Klarion::shutdown(); }
 
     inline void reload(const Config& config) { Klarion::reload(config); }
-    inline void reload(const std::string& config_path) { Klarion::reload(config_path); }
+    inline void reload(const std::string& config_path, bool strict = false) { Klarion::reload(config_path, strict); }
 
     inline std::shared_ptr<Logger> default_logger() {
         return Klarion::default_logger();
