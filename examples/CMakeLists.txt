@@ -15,3 +15,15 @@ target_link_libraries(runtime_control PRIVATE Klarion::klarion)
 
 add_executable(structured_usage structured/structured_usage.cpp)
 target_link_libraries(structured_usage PRIVATE Klarion::klarion)
+
+add_executable(rotating_file_usage rotating_file/rotating_file_usage.cpp)
+target_link_libraries(rotating_file_usage PRIVATE Klarion::klarion)
+
+add_executable(json_usage json/json_usage.cpp)
+target_link_libraries(json_usage PRIVATE Klarion::klarion)
+
+add_executable(backtrace_usage backtrace/backtrace_usage.cpp)
+target_link_libraries(backtrace_usage PRIVATE Klarion::klarion)
+
+add_executable(custom_sink_usage custom_sink/custom_sink_usage.cpp)
+target_link_libraries(custom_sink_usage PRIVATE Klarion::klarion)
