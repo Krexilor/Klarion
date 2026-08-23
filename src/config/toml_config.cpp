@@ -1,6 +1,8 @@
 // LIBRARIES ---------------------------------------------------------------------------------------------------------------------------------------|
 #include <sstream>
+#include <fstream>
 #include <stdexcept>
+#include <algorithm>
 
 // EXTERNAL LIBRARIES ------------------------------------------------------------------------------------------------------------------------------|
 #include <toml++/toml.hpp>
@@ -66,28 +68,45 @@ namespace klarion {
                 level_colors[level] = {color, style};
             }
         }
+
+        void check_unknown_keys(const toml::table& table, const std::vector<std::string>& allowed, const std::string& context) {
+            for (auto&& [key, value] : table) {
+                std::string k = std::string(key.str());
+                if (std::find(allowed.begin(), allowed.end(), k) == allowed.end()) {
+                    throw std::runtime_error("Unknown config key '" + k + "' in " + context);
+                }
+            }
+        }
     }
 
-    Config Config::from_toml_file(const std::string& path) {
+    Config Config::from_toml_file(const std::string& path, bool strict) {
         try {
             toml::table tbl = toml::parse_file(path);
             std::ostringstream oss;
             oss << tbl;
-            return Config::from_toml_string(oss.str());
+            return Config::from_toml_string(oss.str(), strict);
         }
         catch (const toml::parse_error& e) {
             throw std::runtime_error(std::string("Failed to parse TOML config: ") + e.what());
         }
     }
 
-    Config Config::from_toml_string(const std::string& toml) {
+    Config Config::from_toml_string(const std::string& toml, bool strict) {
         Config config;
 
         try {
             toml::table tbl = toml::parse(toml);
 
+            if (strict) {
+                check_unknown_keys(tbl, {"default", "sinks", "loggers"}, "top-level config");
+            }
+
             // Parse default logger settings
             if (auto default_table = tbl["default"].as_table()) {
+                if (strict) {
+                    check_unknown_keys(*default_table, {"level", "pattern", "sinks"}, "[default]");
+                }
+
                 if (auto level_val = (*default_table)["level"].as_string()) {
                     config.set_level(level_from_string(level_val->get()));
                 }
@@ -111,6 +130,14 @@ namespace klarion {
                     if (!sink_config.is_table()) continue;
 
                     const auto& table = *sink_config.as_table();
+
+                    if (strict) {
+                        check_unknown_keys(table, {
+                            "type", "path", "pattern", "level", "append",
+                            "color", "colors", "max_size", "max_files"
+                        }, "[sinks." + std::string(sink_name.str()) + "]");
+                    }
+
                     SinkConfig sc;
                     sc.name = std::string(sink_name.str());
 
@@ -142,6 +169,14 @@ namespace klarion {
                         parse_color_config(*colors_table, sc.level_colors);
                     }
 
+                    if (auto max_size_val = table["max_size"].as_integer()) {
+                        sc.max_size = static_cast<std::size_t>(max_size_val->get());
+                    }
+
+                    if (auto max_files_val = table["max_files"].as_integer()) {
+                        sc.max_files = static_cast<int>(max_files_val->get());
+                    }
+
                     config.sink_configs_.push_back(sc);
                 }
             }
@@ -152,6 +187,11 @@ namespace klarion {
                     if (!logger_configs.is_table()) continue;
 
                     const auto& table = *logger_configs.as_table();
+
+                    if (strict) {
+                        check_unknown_keys(table, {"level", "sinks", "pattern"}, "[loggers." + std::string(logger_name.str()) + "]");
+                    }
+
                     LoggerConfig lc;
                     lc.name = std::string(logger_name.str());
 

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <cstddef>
 
 // PROJECT HEADER FILES ----------------------------------------------------------------------------------------------------------------------------|
 #include "klarion/core/level.hpp"
@@ -21,6 +22,10 @@ namespace klarion {
         Level level{Level::Info};
         bool append{true};
         detail::ColorMode color_mode{detail::ColorMode::Auto};
+
+        // Rotating file sink only
+        std::size_t max_size{0};
+        int max_files{0};
 
         std::map<Level, std::pair<detail::Color, detail::Style>> level_colors;
     };
@@ -43,6 +48,8 @@ namespace klarion {
             Config& add_console_sink(detail::ColorMode color_mode, const std::string& pattern = "");
             Config& add_file_sink(const std::string& path, bool append = true);
             Config& add_file_sink(const std::string& path, bool append, const std::string& pattern);
+            Config& add_rotating_file_sink(const std::string& path, std::size_t max_size_bytes, int max_files, const std::string& pattern = "");
+            Config& add_json_sink(const std::string& path, bool append = true);
             Config& add_logger(LoggerConfig config);
 
             // Getters
@@ -52,11 +59,12 @@ namespace klarion {
             const std::vector<LoggerConfig>& loggers() const { return logger_configs_; }
             const std::vector<std::string>& default_sinks() const { return default_sinks_; }
 
-            // Mutable access for post-parse adjustments
+            // Mutable access for post-parse adjustments (e.g. environment overrides)
             std::vector<LoggerConfig>& mutable_loggers() { return logger_configs_; }
 
-            static Config from_toml_file(const std::string& path);
-            static Config from_toml_string(const std::string& toml);
+            // strict = true causes TOML parsing to throw on any unrecognized config key instead of silently ignoring it.
+            static Config from_toml_file(const std::string& path, bool strict = false);
+            static Config from_toml_string(const std::string& toml, bool strict = false);
 
         private:
             Level default_level_{Level::Info};
