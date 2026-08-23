@@ -3,10 +3,13 @@
 
 // PROJECT HEADER FILES ----------------------------------------------------------------------------------------------------------------------------|
 #include "klarion/sinks/file_sink.hpp"
+#include "klarion/detail/filesystem/path_utils.hpp"
 
 // FILE SINK IMPLEMENTATION ------------------------------------------------------------------------------------------------------------------------|
 namespace klarion {
     FileSink::FileSink(const std::string& path, bool append) : path_(path) {
+        detail::ensure_parent_directory_exists(path);
+
         file_.open(path, append ? std::ios::app : std::ios::trunc);
         if (!file_.is_open()) {
             throw std::runtime_error("Failed to open log file: " + path);
