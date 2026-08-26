@@ -1,3 +1,3 @@
 # KLARION
 
-A logger library
+A modern, embeddable, config-driven C++ logging library.
